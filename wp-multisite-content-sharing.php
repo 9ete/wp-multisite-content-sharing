@@ -8,7 +8,7 @@
  * Author URI:          9ete.com
  * Text Domain:         wp-custom-multisite-content-sharing
  * Domain Path:         /languages
- * Version:             0.0.4
+ * Version:             0.0.5
  *
  * @package         WP_Multisite_Content_Sharing
  */
@@ -18,10 +18,19 @@ define('WP_MULTISITE_CONTENT_SHARING_VERSION', get_file_data(__FILE__, array('Ve
 define('WP_MULTISITE_CONTENT_SHARING_PATH', plugin_dir_path(__FILE__));
 define('WP_MULTISITE_CONTENT_SHARING_URL', plugin_dir_url(__FILE__));
 
+// Conditionally include and initialize cron functionality
+if (defined('WP_MULTISITE_CONTENT_SHARING_CRON_TIME')) {
+
+    require_once WP_MULTISITE_CONTENT_SHARING_PATH . 'includes/class-wp-multisite-content-sharing-cron.php';
+
+    add_action('plugins_loaded', function () {
+        new WP_Multisite_Content_Sharing_Cron();
+    });
+}
+
 // Autoload classes
 require_once WP_MULTISITE_CONTENT_SHARING_PATH . 'includes/class-wp-multisite-content-sharing-admin.php';
 require_once WP_MULTISITE_CONTENT_SHARING_PATH . 'includes/class-wp-multisite-content-sharing-importer.php';
-require_once WP_MULTISITE_CONTENT_SHARING_PATH . 'includes/cron.php';
 
 // Initialize the plugin
 add_action('plugins_loaded', function () {

@@ -1,7 +1,18 @@
 <?php
+
 class WP_Multisite_Content_Sharing_Admin {
+
+    private bool $mandatory_source_site = false;
+
+    private bool $mandatory_destination_site = false;
+
+    private bool $both_sites_mandatory = false;
+
     public function __construct() {
         add_action('admin_menu', [$this, 'add_menu']);
+        $this->mandatory_source_site = defined('WP_MULTISITE_CONTENT_SHARING_SOURCE') ? WP_MULTISITE_CONTENT_SHARING_SOURCE : false;
+        $this->mandatory_destination_site = defined('WP_MULTISITE_CONTENT_SHARING_DESTINATION') ? WP_MULTISITE_CONTENT_SHARING_DESTINATION : false;
+        $this->both_sites_mandatory = $this->mandatory_source_site && $this->mandatory_destination_site;
     }
 
     public function add_menu() {
@@ -65,14 +76,34 @@ class WP_Multisite_Content_Sharing_Admin {
     }
 
     private function render_sites_dropdown($reverse = false) {
-        $sites = get_sites();
+        $sites = $this->get_available_sites();
+
         if ($reverse) {
             $sites = array_reverse($sites);
         }
-        foreach ($sites as $site) {
+
+        foreach ($sites as $index => $site) {
+            if ( $this->both_sites_mandatory && ! $index == 0 ) {
+                continue;
+            }
+
             $site_id = $site->blog_id;
             $site_name = get_blog_option($site_id, 'blogname');
             echo "<option value='$site_id'>$site_name</option>";
+        }
+    }
+
+    private function get_available_sites() {
+        if ( $this->both_sites_mandatory ) {
+            $source_site = WP_MULTISITE_CONTENT_SHARING_SOURCE;
+            $destination_site = WP_MULTISITE_CONTENT_SHARING_DESTINATION;
+            return [
+                (object) ['blog_id' => $destination_site],
+                (object) ['blog_id' => $source_site],
+            ];
+
+        } else {
+            return get_sites();
         }
     }
 }
