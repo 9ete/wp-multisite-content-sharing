@@ -23,19 +23,20 @@ class WP_Multisite_Content_Sharing_Importer {
         foreach ($source_posts as $post) {
             $source_post_id = $post->ID;
 
-            // Check for existing post
-            $existing_posts = new WP_Query([
-                'meta_query' => [['key' => '_source_post_id', 'value' => $source_post_id, 'compare' => '=']],
+            // Check if a post with the same title exists on the destination site
+            $existing_posts = get_posts([
+                'title' => $post->post_title,
+                'post_type' => 'post',
+                'post_status' => 'publish',
+                'numberposts' => 1
             ]);
+            
+            $existing_post = !empty($existing_posts) ? $existing_posts[0] : null;
 
-            // Delete existing post to ensure re-import
-            if ($existing_posts->have_posts()) {
-                while ($existing_posts->have_posts()) {
-                    $existing_posts->the_post();
-                    wp_delete_post(get_the_ID(), true);
-                }
+            if ($existing_post) {
+                error_log("Post with title '{$post->post_title}' already exists on destination site. Skipping import.");
+                continue;
             }
-            wp_reset_postdata();
 
             // Insert new post
             $new_post_id = wp_insert_post([

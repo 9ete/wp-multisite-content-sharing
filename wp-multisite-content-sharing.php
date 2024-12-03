@@ -8,13 +8,13 @@
  * Author URI:          9ete.com
  * Text Domain:         wp-custom-multisite-content-sharing
  * Domain Path:         /languages
- * Version:             0.0.3
+ * Version:             0.0.4
  *
  * @package         WP_Multisite_Content_Sharing
  */
 
 // Define constants
-define('WP_MULTISITE_CONTENT_SHARING_VERSION', '0.0.3');
+define('WP_MULTISITE_CONTENT_SHARING_VERSION', get_file_data(__FILE__, array('Version' => 'Version'))['Version']);
 define('WP_MULTISITE_CONTENT_SHARING_PATH', plugin_dir_path(__FILE__));
 define('WP_MULTISITE_CONTENT_SHARING_URL', plugin_dir_url(__FILE__));
 
