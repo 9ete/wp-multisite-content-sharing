@@ -8,7 +8,7 @@
  * Author URI:          9ete.com
  * Text Domain:         wp-custom-multisite-content-sharing
  * Domain Path:         /languages
- * Version:             0.0.5
+ * Version:             0.0.6
  *
  * @package         WP_Multisite_Content_Sharing
  */
